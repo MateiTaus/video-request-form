@@ -1,0 +1,162 @@
+const form = document.getElementById("videoForm");
+const submitBtn = document.getElementById("submitBtn");
+const submitStatus = document.getElementById("submitStatus");
+const errorSummary = document.getElementById("errorSummary");
+
+const panelT2V = document.getElementById("panelTextToVideo");
+const panelI2V = document.getElementById("panelImageToVideo");
+const panelR2V = document.getElementById("panelReferenceToVideo");
+
+function qs(sel) { return document.querySelector(sel); }
+function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+
+function getGenerationType() {
+  const checked = qs('input[name="generationType"]:checked');
+  return checked ? checked.value : "";
+}
+
+function showPanel(type) {
+  panelT2V.classList.add("hidden");
+  panelI2V.classList.add("hidden");
+  panelR2V.classList.add("hidden");
+
+  if (type === "text_to_video") panelT2V.classList.remove("hidden");
+  if (type === "image_to_video") panelI2V.classList.remove("hidden");
+  if (type === "reference_to_video") panelR2V.classList.remove("hidden");
+}
+
+function setFieldError(fieldName, message) {
+  const err = document.querySelector(`[data-error-for="${fieldName}"]`);
+  if (err) err.textContent = message || "";
+
+  const input = document.getElementById(fieldName);
+  if (input) {
+    if (message) input.classList.add("errorInput");
+    else input.classList.remove("errorInput");
+  }
+}
+
+function clearAllErrors() {
+  qsa("[data-error-for]").forEach(e => e.textContent = "");
+  qsa(".errorInput").forEach(el => el.classList.remove("errorInput"));
+  errorSummary.classList.add("hidden");
+  errorSummary.textContent = "";
+}
+
+function hasFile(inputId) {
+  const el = document.getElementById(inputId);
+  return el && el.files && el.files.length > 0;
+}
+
+function validate() {
+  clearAllErrors();
+
+  const errors = [];
+
+  const clientCode = qs("#clientCode").value.trim();
+  const videoLength = qs("#videoLength").value;
+  const ratio = qs("#ratioCommon").value;
+  const genType = getGenerationType();
+
+  if (!clientCode) {
+    setFieldError("clientCode", "Completeaza Cod Client.");
+    errors.push("Cod Client este obligatoriu.");
+  }
+
+  if (!videoLength) {
+    setFieldError("videoLength", "Alege Lungimea Videoclipului.");
+    errors.push("Lungimea Videoclipului este obligatorie.");
+  }
+
+  if (!ratio) {
+    setFieldError("ratioCommon", "Alege Ratio.");
+    errors.push("Ratio este obligatoriu.");
+  }
+
+  if (!genType) {
+    setFieldError("generationType", "Selecteaza un Generation Type.");
+    errors.push("Generation Type este obligatoriu.");
+  }
+
+  if (genType === "text_to_video") {
+    const prompt = qs("#promptT2V").value.trim();
+    if (!prompt) {
+      setFieldError("promptT2V", "Scrie Generation prompt.");
+      errors.push("La Text to Video: Generation prompt este obligatoriu.");
+    }
+  }
+
+  if (genType === "image_to_video") {
+    const prompt = qs("#promptI2V").value.trim();
+    if (!hasFile("startFrame")) {
+      setFieldError("startFrame", "Incarca Start frame (obligatoriu).");
+      errors.push("La Image to Video: Start frame este obligatoriu.");
+    }
+    if (!prompt) {
+      setFieldError("promptI2V", "Scrie Generation prompt.");
+      errors.push("La Image to Video: Generation prompt este obligatoriu.");
+    }
+  }
+
+  if (genType === "reference_to_video") {
+    const prompt = qs("#promptR2V").value.trim();
+    const refCount = ["ref1","ref2","ref3"].filter(id => hasFile(id)).length;
+
+    if (refCount < 1) {
+      setFieldError("ref1", "Incarca minim 1 imagine de referinta.");
+      errors.push("La Reference to Video: minim 1 imagine de referinta este obligatorie.");
+    }
+    if (refCount > 3) {
+      errors.push("La Reference to Video: maxim 3 imagini.");
+    }
+    if (!prompt) {
+      setFieldError("promptR2V", "Scrie Generation prompt.");
+      errors.push("La Reference to Video: Generation prompt este obligatoriu.");
+    }
+  }
+
+  if (errors.length > 0) {
+    errorSummary.textContent = "Verifica urmatoarele: " + errors[0];
+    errorSummary.classList.remove("hidden");
+  }
+
+  submitBtn.disabled = errors.length > 0;
+
+  return errors.length === 0;
+}
+
+function wireLiveValidation() {
+  // Validare pe input/change ca sa fie user-friendly
+  qsa("input, select, textarea").forEach(el => {
+    el.addEventListener("input", () => validate());
+    el.addEventListener("change", () => validate());
+  });
+
+  qsa('input[name="generationType"]').forEach(r => {
+    r.addEventListener("change", () => {
+      showPanel(getGenerationType());
+      validate();
+    });
+  });
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  submitStatus.textContent = "";
+
+  const ok = validate();
+  if (!ok) {
+    submitStatus.textContent = "Formular incomplet. Corecteaza campurile marcate cu rosu.";
+    return;
+  }
+
+  // PASUL 2: Deocamdata NU trimitem la n8n.
+  // Confirmare vizibila ca totul e valid.
+  submitStatus.style.color = "rgba(70,227,139,0.95)";
+  submitStatus.textContent = "Perfect. Formular valid (in Pasul 4/5 il conectam la n8n).";
+});
+
+// Initial
+showPanel(getGenerationType());
+wireLiveValidation();
+validate();
