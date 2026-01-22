@@ -132,11 +132,12 @@
 
                 <div class="uploadWrap">
                   <input id="startFrame" name="startFrame" type="file" accept="image/*" class="fileHidden" />
-                  <label id="startFrameBox" for="startFrame" class="uploadBox">
+                   <label id="startFrameBox" for="startFrame" class="uploadBox">
                     <div class="uploadTop">Incarca imagine</div>
+                    <img id="startFramePreview" class="uploadPreview hidden" alt="Preview start frame" />
                     <div id="startFrameName" class="uploadName">Nicio imagine selectata</div>
                     <div class="uploadHint">Click aici</div>
-                  </label>
+                   </label>
                 </div>
 
                 <div class="miniNote">Accepta: jpg, png, webp.</div>
@@ -149,10 +150,11 @@
                 <div class="uploadWrap">
                   <input id="lastFrame" name="lastFrame" type="file" accept="image/*" class="fileHidden" />
                   <label id="lastFrameBox" for="lastFrame" class="uploadBox">
-                    <div class="uploadTop">Incarca imagine</div>
-                    <div id="lastFrameName" class="uploadName">Nicio imagine selectata</div>
-                    <div class="uploadHint">Click aici (optional)</div>
-                  </label>
+  <div class="uploadTop">Incarca imagine</div>
+  <img id="lastFramePreview" class="uploadPreview hidden" alt="Preview last frame" />
+  <div id="lastFrameName" class="uploadName">Nicio imagine selectata</div>
+  <div class="uploadHint">Click aici (optional)</div>
+</label>
                 </div>
 
                 <div class="miniNote">Optional.</div>
@@ -184,6 +186,7 @@
                   <input id="ref1" name="ref1" type="file" accept="image/*" class="fileHidden" />
                   <label id="ref1Box" for="ref1" class="uploadBox">
                     <div class="uploadTop">Incarca referinta</div>
+                    <img id="ref1Preview" class="uploadPreview hidden" alt="Preview referinta 1" />
                     <div id="ref1Name" class="uploadName">Nicio imagine selectata</div>
                     <div class="uploadHint">Click aici</div>
                   </label>
@@ -199,6 +202,7 @@
                   <input id="ref2" name="ref2" type="file" accept="image/*" class="fileHidden" />
                   <label id="ref2Box" for="ref2" class="uploadBox">
                     <div class="uploadTop">Incarca referinta</div>
+                    <img id="ref2Preview" class="uploadPreview hidden" alt="Preview referinta 2" />
                     <div id="ref2Name" class="uploadName">Nicio imagine selectata</div>
                     <div class="uploadHint">Click aici (optional)</div>
                   </label>
@@ -214,6 +218,7 @@
                   <input id="ref3" name="ref3" type="file" accept="image/*" class="fileHidden" />
                   <label id="ref3Box" for="ref3" class="uploadBox">
                     <div class="uploadTop">Incarca referinta</div>
+                    <img id="ref3Preview" class="uploadPreview hidden" alt="Preview referinta 3" />
                     <div id="ref3Name" class="uploadName">Nicio imagine selectata</div>
                     <div class="uploadHint">Click aici (optional)</div>
                   </label>
