@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const N8N_WEBHOOK_URL = "https://n8n.srv892462.hstgr.cloud/webhook/video-form-intake";
   const form = document.getElementById("videoForm");
   const submitBtn = document.getElementById("submitBtn");
   const submitStatus = document.getElementById("submitStatus");
@@ -161,6 +162,25 @@ function wireFileInput(inputId, nameId, previewId) {
   });
 }
 
+  function showSummaryErrors() {
+  const box = document.getElementById("errorSummary");
+  if (!box) return;
+
+  const errors = Array.from(document.querySelectorAll(".error"))
+    .map(e => e.textContent?.trim())
+    .filter(Boolean);
+
+  if (errors.length === 0) {
+    box.classList.add("hidden");
+    box.textContent = "";
+    return;
+  }
+
+  box.classList.remove("hidden");
+  box.textContent = "Verifica: " + errors[0];
+}
+
+
 
   function wireTouchedEvents() {
     // Text/select/textarea: marcam touched pe blur (cand iese din camp)
@@ -183,6 +203,30 @@ function wireFileInput(inputId, nameId, previewId) {
       });
     });
 
+    function resetUploadsAndPanels() {
+  const previews = [
+    ["startFramePreview", "startFrameName"],
+    ["lastFramePreview", "lastFrameName"],
+    ["ref1Preview", "ref1Name"],
+    ["ref2Preview", "ref2Name"],
+    ["ref3Preview", "ref3Name"],
+  ];
+
+  previews.forEach(([p, n]) => {
+    const img = document.getElementById(p);
+    const name = document.getElementById(n);
+    if (img) { img.src = ""; img.classList.add("hidden"); }
+    if (name) name.textContent = "Nicio imagine selectata";
+  });
+
+  document.getElementById("panelTextToVideo")?.classList.add("hidden");
+  document.getElementById("panelImageToVideo")?.classList.add("hidden");
+  document.getElementById("panelReferenceToVideo")?.classList.add("hidden");
+
+  // curatam status
+  statusEl.classList.remove("statusOk", "statusBad");
+}
+
     // File inputs (numele + touched)
 wireFileInput("startFrame", "startFrameName", "startFramePreview");
 wireFileInput("lastFrame", "lastFrameName", "lastFramePreview");
@@ -191,21 +235,87 @@ wireFileInput("ref2", "ref2Name", "ref2Preview");
 wireFileInput("ref3", "ref3Name", "ref3Preview");
   }
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    submitted = true;
-    submitStatus.textContent = "";
-    submitStatus.style.color = "rgba(255,255,255,0.72)";
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const ok = validate(true);
-    if (!ok) {
-      submitStatus.textContent = "Formular incomplet. Corecteaza campurile marcate cu rosu.";
-      return;
+  // fortam validare completa la submit
+  const ok = validate(false);
+  if (!ok) {
+    showSummaryErrors();
+    return;
+  }
+
+  submitBtn.disabled = true;
+  statusEl.textContent = "Se trimite...";
+
+  try {
+    const fd = new FormData();
+
+    // text fields
+    fd.append("clientCode", document.getElementById("clientCode").value.trim());
+    fd.append("projectName", document.getElementById("projectName").value.trim());
+    fd.append("videoLength", document.getElementById("videoLength").value);
+    fd.append("ratioCommon", document.getElementById("ratioCommon").value);
+
+    const generationType = document.querySelector('input[name="generationType"]:checked')?.value || "";
+    fd.append("generationType", generationType);
+
+    // prompt: trimitem doar campul relevant (ca tu deja le ai separate)
+    if (generationType === "text_to_video") {
+      fd.append("promptT2V", document.getElementById("promptT2V").value.trim());
+    } else if (generationType === "image_to_video") {
+      fd.append("promptI2V", document.getElementById("promptI2V").value.trim());
+    } else if (generationType === "reference_to_video") {
+      fd.append("promptR2V", document.getElementById("promptR2V").value.trim());
     }
 
-    submitStatus.style.color = "rgba(70,227,139,0.95)";
-    submitStatus.textContent = "Perfect. Formular valid (in pasul urmator il conectam la n8n).";
-  });
+    // imagini (binary) - IMPORTANT: NU setam headers manual!
+    if (generationType === "image_to_video") {
+      const start = document.getElementById("startFrame").files?.[0];
+      const last = document.getElementById("lastFrame").files?.[0];
+
+      if (start) fd.append("startFrame", start, start.name);
+      if (last) fd.append("lastFrame", last, last.name);
+    }
+
+    if (generationType === "reference_to_video") {
+      const r1 = document.getElementById("ref1").files?.[0];
+      const r2 = document.getElementById("ref2").files?.[0];
+      const r3 = document.getElementById("ref3").files?.[0];
+
+      if (r1) fd.append("ref1", r1, r1.name);
+      if (r2) fd.append("ref2", r2, r2.name);
+      if (r3) fd.append("ref3", r3, r3.name);
+    }
+
+    const res = await fetch(N8N_WEBHOOK_URL, {
+      method: "POST",
+      body: fd,
+    });
+
+    let data = null;
+    try { data = await res.json(); } catch {}
+
+    if (!res.ok) {
+      const msg = data?.message || `Eroare la trimitere (HTTP ${res.status}).`;
+      throw new Error(msg);
+    }
+
+    statusEl.textContent = data?.message || "Trimis cu succes!";
+    statusEl.classList.add("statusOk");
+    statusEl.classList.remove("statusBad");
+
+    form.reset();
+    resetUploadsAndPanels();
+
+    submitBtn.disabled = true;
+  } catch (err) {
+    statusEl.textContent = err?.message || "Eroare la trimitere. Incearca din nou.";
+    statusEl.classList.add("statusBad");
+    statusEl.classList.remove("statusOk");
+    submitBtn.disabled = false;
+  }
+});
 
   // Initial: NU aratam erori, doar tinem butonul disabled corect
   showPanel(getGenerationType());
