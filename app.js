@@ -127,18 +127,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // afiseaza numele fisierului in box
-  function wireFileName(inputId, nameId) {
-    const input = document.getElementById(inputId);
-    const nameEl = document.getElementById(nameId);
-    if (!input || !nameEl) return;
+function wireFileInput(inputId, nameId, previewId) {
+  const input = document.getElementById(inputId);
+  const nameEl = document.getElementById(nameId);
+  const previewEl = document.getElementById(previewId);
+  if (!input || !nameEl || !previewEl) return;
 
-    input.addEventListener("change", () => {
-      markTouched(inputId);
-      const file = input.files && input.files[0] ? input.files[0].name : "Nicio imagine selectata";
-      nameEl.textContent = file;
+  input.addEventListener("change", () => {
+    markTouched(inputId);
+
+    const file = input.files && input.files[0] ? input.files[0] : null;
+
+    if (!file) {
+      nameEl.textContent = "Nicio imagine selectata";
+      previewEl.src = "";
+      previewEl.classList.add("hidden");
       validate(true);
-    });
-  }
+      return;
+    }
+
+    nameEl.textContent = file.name;
+
+    const url = URL.createObjectURL(file);
+    previewEl.src = url;
+    previewEl.classList.remove("hidden");
+
+    // eliberam memoria cand s-a incarcat imaginea
+    previewEl.onload = () => {
+      URL.revokeObjectURL(url);
+    };
+
+    validate(true);
+  });
+}
+
 
   function wireTouchedEvents() {
     // Text/select/textarea: marcam touched pe blur (cand iese din camp)
@@ -162,11 +184,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // File inputs (numele + touched)
-    wireFileName("startFrame", "startFrameName");
-    wireFileName("lastFrame", "lastFrameName");
-    wireFileName("ref1", "ref1Name");
-    wireFileName("ref2", "ref2Name");
-    wireFileName("ref3", "ref3Name");
+wireFileInput("startFrame", "startFrameName", "startFramePreview");
+wireFileInput("lastFrame", "lastFrameName", "lastFramePreview");
+wireFileInput("ref1", "ref1Name", "ref1Preview");
+wireFileInput("ref2", "ref2Name", "ref2Preview");
+wireFileInput("ref3", "ref3Name", "ref3Preview");
   }
 
   form.addEventListener("submit", (e) => {
