@@ -1,7 +1,6 @@
 :root{
   --bg:#070a12;
   --card:#0b1020;
-  --card2:#0f1730;
   --text:#ffffff;
   --muted:rgba(255,255,255,0.72);
   --muted2:rgba(255,255,255,0.55);
@@ -24,6 +23,7 @@ body{
 }
 
 .page{min-height:100%; display:flex; flex-direction:column}
+
 .header{
   padding:20px 16px;
   border-bottom:1px solid var(--line);
@@ -33,6 +33,7 @@ body{
   top:0;
   z-index: 5;
 }
+
 .brand{
   max-width:980px;
   margin:0 auto;
@@ -40,11 +41,13 @@ body{
   align-items:center;
   gap:12px;
 }
+
 .logoDot{
   width:14px;height:14px;border-radius:999px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   box-shadow: 0 0 24px rgba(255,209,102,0.35);
 }
+
 .title{font-weight:800; letter-spacing:0.2px}
 .subtitle{font-size:13px; color:var(--muted2); margin-top:2px}
 
@@ -67,12 +70,14 @@ body{
   padding:18px 18px 8px;
   border-bottom:1px solid var(--line);
 }
+
 .cardHeader h1{margin:0 0 6px; font-size:20px}
 .cardHeader p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
 
 .form{padding:16px 18px 18px}
 
 .section{padding:14px 0 6px}
+
 .sectionTitle{
   font-weight:800;
   font-size:14px;
@@ -87,7 +92,7 @@ body{
 label{font-size:13px; color:rgba(255,255,255,0.92)}
 .req{color:var(--accent); font-weight:800}
 
-input[type="text"], select, textarea, input[type="file"]{
+input[type="text"], select, textarea{
   width:100%;
   border:1px solid var(--line);
   background: rgba(15,23,48,0.65);
@@ -100,7 +105,7 @@ input[type="text"], select, textarea, input[type="file"]{
 
 textarea{resize:vertical; min-height:110px}
 
-input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus{
+input[type="text"]:focus, select:focus, textarea:focus{
   border-color: rgba(255,209,102,0.45);
   box-shadow: 0 0 0 3px rgba(255,209,102,0.14);
 }
@@ -113,6 +118,7 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   grid-template-columns: 1fr 1fr 1fr;
   gap:12px;
 }
+
 .choiceCard{
   display:flex;
   gap:10px;
@@ -124,14 +130,17 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   cursor:pointer;
   transition: transform .05s, border-color .15s, box-shadow .15s, background .15s;
 }
+
 .choiceCard:hover{
   border-color: rgba(255,209,102,0.35);
   background: rgba(15,23,48,0.62);
 }
+
 .choiceCard input{
   margin-top:3px;
   accent-color: var(--accent);
 }
+
 .choiceTitle{font-weight:800}
 .choiceDesc{font-size:12px; color:var(--muted2); margin-top:2px; line-height:1.35}
 
@@ -142,7 +151,9 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   border:1px solid rgba(255,255,255,0.14);
   background: linear-gradient(180deg, rgba(15,23,48,0.62), rgba(15,23,48,0.36));
 }
+
 .panelTitle{font-weight:900; margin-bottom:10px}
+
 .infoBox{
   font-size:13px;
   color:rgba(255,255,255,0.82);
@@ -160,6 +171,7 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   align-items:center;
   gap:12px;
 }
+
 .btnPrimary{
   border:none;
   border-radius:14px;
@@ -171,11 +183,14 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   transition: transform .05s, opacity .15s;
   min-width: 150px;
 }
+
 .btnPrimary:disabled{
   opacity:0.35;
   cursor:not-allowed;
 }
+
 .btnPrimary:active{transform: translateY(1px)}
+
 .status{font-size:13px; color:var(--muted)}
 
 .error{
@@ -216,6 +231,61 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="file"]:focus
   color:var(--muted2);
   font-size:12px;
   text-align:center;
+}
+
+/* Upload boxes (fara "Choose file") */
+.fileHidden{
+  position:absolute;
+  left:-9999px;
+  width:1px;
+  height:1px;
+  opacity:0;
+}
+
+.uploadWrap{
+  position:relative;
+}
+
+.uploadBox{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px dashed rgba(255,255,255,0.22);
+  background: rgba(15,23,48,0.45);
+  cursor:pointer;
+  transition: border-color .15s, box-shadow .15s, transform .05s, background .15s;
+  min-height: 86px;
+  justify-content:center;
+}
+
+.uploadBox:hover{
+  border-color: rgba(255,209,102,0.45);
+  background: rgba(15,23,48,0.62);
+}
+
+.uploadTop{
+  font-weight:900;
+  color: rgba(255,255,255,0.92);
+  font-size:13px;
+}
+
+.uploadName{
+  color: rgba(255,255,255,0.72);
+  font-size:12px;
+  word-break: break-word;
+}
+
+.uploadHint{
+  font-size:12px;
+  color: rgba(255,209,102,0.92);
+  font-weight:800;
+}
+
+.errorUpload{
+  border-color: rgba(255,77,77,0.65) !important;
+  box-shadow: 0 0 0 3px rgba(255,77,77,0.14) !important;
 }
 
 /* Responsive */
