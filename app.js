@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("videoForm");
   const submitBtn = document.getElementById("submitBtn");
   const submitStatus = document.getElementById("submitStatus");
+  const statusEl = submitStatus;
   const errorSummary = document.getElementById("errorSummary");
 
   const panelT2V = document.getElementById("panelTextToVideo");
