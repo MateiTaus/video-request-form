@@ -1,153 +1,208 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("videoForm");
-  const submitBtn = document.getElementById("submitBtn");
-  const submitStatus = document.getElementById("submitStatus");
-  const errorSummary = document.getElementById("errorSummary");
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formular Generare Video</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <div class="logoDot"></div>
+        <div>
+          <div class="title">Formular Generare Video</div>
+          <div class="subtitle">Completeaza clar. Campurile obligatorii sunt marcate.</div>
+        </div>
+      </div>
+    </header>
 
-  const panelT2V = document.getElementById("panelTextToVideo");
-  const panelI2V = document.getElementById("panelImageToVideo");
-  const panelR2V = document.getElementById("panelReferenceToVideo");
+    <main class="container">
+      <div class="card">
+        <div class="cardHeader">
+          <h1>Solicitare video</h1>
+          <p>Formular simplu, gandit pentru persoane non-tehnice. Daca lipseste ceva obligatoriu, vezi mesajul rosu sub camp.</p>
+        </div>
 
-  function qs(sel) { return document.querySelector(sel); }
-  function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+        <div id="errorSummary" class="errorSummary hidden"></div>
 
-  function getGenerationType() {
-    const checked = qs('input[name="generationType"]:checked');
-    return checked ? checked.value : "";
-  }
+        <form id="videoForm" class="form" novalidate>
+          <!-- BASIC FIELDS -->
+          <section class="section">
+            <div class="sectionTitle">Detalii generale</div>
 
-  function showPanel(type) {
-    panelT2V.classList.add("hidden");
-    panelI2V.classList.add("hidden");
-    panelR2V.classList.add("hidden");
+            <div class="grid2">
+              <div class="field">
+                <label for="clientCode">Cod Client <span class="req">*</span></label>
+                <input id="clientCode" name="clientCode" type="text" placeholder="Cod client primit de la prestator" />
+                <div class="error" data-error-for="clientCode"></div>
+              </div>
 
-    if (type === "text_to_video") panelT2V.classList.remove("hidden");
-    if (type === "image_to_video") panelI2V.classList.remove("hidden");
-    if (type === "reference_to_video") panelR2V.classList.remove("hidden");
-  }
+              <div class="field">
+                <label for="projectName">Denumire Proiect</label>
+                <input id="projectName" name="projectName" type="text" placeholder="Numele Proiectului (optional)" />
+                <div class="help">Camp optional.</div>
+                <div class="error" data-error-for="projectName"></div>
+              </div>
+            </div>
 
-  function setFieldError(fieldName, message) {
-    const err = document.querySelector(`[data-error-for="${fieldName}"]`);
-    if (err) err.textContent = message || "";
+            <div class="grid2">
+              <div class="field">
+                <label for="videoLength">Lungimea Videoclipului <span class="req">*</span></label>
+                <select id="videoLength" name="videoLength">
+                  <option value="" selected disabled>Alege durata</option>
+                  <option value="8s">8s</option>
+                  <option value="16s">16s</option>
+                  <option value="24s">24s</option>
+                </select>
+                <div class="error" data-error-for="videoLength"></div>
+              </div>
 
-    const input = document.getElementById(fieldName);
-    if (input) {
-      if (message) input.classList.add("errorInput");
-      else input.classList.remove("errorInput");
-    }
-  }
+              <div class="field">
+                <label for="ratioCommon">Ratio <span class="req">*</span></label>
+                <select id="ratioCommon" name="ratioCommon">
+                  <option value="" selected disabled>Alege ratio</option>
+                  <option value="16:9">16:9 (landscape)</option>
+                  <option value="9:16">9:16 (portrait)</option>
+                </select>
+                <div class="help">Ratio se aplica selectiei active.</div>
+                <div class="error" data-error-for="ratioCommon"></div>
+              </div>
+            </div>
+          </section>
 
-  function clearAllErrors() {
-    qsa("[data-error-for]").forEach(e => e.textContent = "");
-    qsa(".errorInput").forEach(el => el.classList.remove("errorInput"));
-    errorSummary.classList.add("hidden");
-    errorSummary.textContent = "";
-  }
+          <!-- GENERATION TYPE -->
+          <section class="section">
+            <div class="sectionTitle">Generation Type <span class="req">*</span></div>
 
-  function hasFile(inputId) {
-    const el = document.getElementById(inputId);
-    return el && el.files && el.files.length > 0;
-  }
+            <div class="choiceRow" role="radiogroup" aria-label="Generation Type">
+              <label class="choiceCard">
+                <input type="radio" name="generationType" value="text_to_video" />
+                <div class="choiceContent">
+                  <div class="choiceTitle">Text to Video</div>
+                  <div class="choiceDesc">Genereaza video doar din prompt.</div>
+                </div>
+              </label>
 
-  function validate() {
-    clearAllErrors();
-    const errors = [];
+              <label class="choiceCard">
+                <input type="radio" name="generationType" value="image_to_video" />
+                <div class="choiceContent">
+                  <div class="choiceTitle">Image to Video</div>
+                  <div class="choiceDesc">Start frame obligatoriu. Last frame optional.</div>
+                </div>
+              </label>
 
-    const clientCode = qs("#clientCode").value.trim();
-    const videoLength = qs("#videoLength").value;
-    const ratio = qs("#ratioCommon").value;
-    const genType = getGenerationType();
+              <label class="choiceCard">
+                <input type="radio" name="generationType" value="reference_to_video" />
+                <div class="choiceContent">
+                  <div class="choiceTitle">Reference to Video</div>
+                  <div class="choiceDesc">1–3 imagini pentru referinta (minim 1).</div>
+                </div>
+              </label>
+            </div>
 
-    if (!clientCode) {
-      setFieldError("clientCode", "Completeaza Cod Client.");
-      errors.push("Cod Client este obligatoriu.");
-    }
-    if (!videoLength) {
-      setFieldError("videoLength", "Alege Lungimea Videoclipului.");
-      errors.push("Lungimea Videoclipului este obligatorie.");
-    }
-    if (!ratio) {
-      setFieldError("ratioCommon", "Alege Ratio.");
-      errors.push("Ratio este obligatoriu.");
-    }
-    if (!genType) {
-      setFieldError("generationType", "Selecteaza un Generation Type.");
-      errors.push("Generation Type este obligatoriu.");
-    }
+            <div class="error" data-error-for="generationType"></div>
+          </section>
 
-    if (genType === "text_to_video") {
-      const prompt = qs("#promptT2V").value.trim();
-      if (!prompt) {
-        setFieldError("promptT2V", "Scrie Generation prompt.");
-        errors.push("La Text to Video: Generation prompt este obligatoriu.");
-      }
-    }
+          <!-- CONDITIONAL: TEXT TO VIDEO -->
+          <section id="panelTextToVideo" class="panel hidden">
+            <div class="panelTitle">Setari: Text to Video</div>
 
-    if (genType === "image_to_video") {
-      const prompt = qs("#promptI2V").value.trim();
-      if (!hasFile("startFrame")) {
-        setFieldError("startFrame", "Incarca Start frame (obligatoriu).");
-        errors.push("La Image to Video: Start frame este obligatoriu.");
-      }
-      if (!prompt) {
-        setFieldError("promptI2V", "Scrie Generation prompt.");
-        errors.push("La Image to Video: Generation prompt este obligatoriu.");
-      }
-    }
+            <div class="field">
+              <label for="promptT2V">Generation prompt <span class="req">*</span></label>
+              <textarea id="promptT2V" name="promptT2V" rows="5" placeholder="Scrie promptul complet pentru generare..."></textarea>
+              <div class="error" data-error-for="promptT2V"></div>
+            </div>
+          </section>
 
-    if (genType === "reference_to_video") {
-      const prompt = qs("#promptR2V").value.trim();
-      const refCount = ["ref1","ref2","ref3"].filter(id => hasFile(id)).length;
+          <!-- CONDITIONAL: IMAGE TO VIDEO -->
+          <section id="panelImageToVideo" class="panel hidden">
+            <div class="panelTitle">Setari: Image to Video</div>
 
-      if (refCount < 1) {
-        setFieldError("ref1", "Incarca minim 1 imagine de referinta.");
-        errors.push("La Reference to Video: minim 1 imagine de referinta este obligatorie.");
-      }
-      if (!prompt) {
-        setFieldError("promptR2V", "Scrie Generation prompt.");
-        errors.push("La Reference to Video: Generation prompt este obligatoriu.");
-      }
-    }
+            <div class="infoBox">
+              Start frame reprezinta cum va incepe videoul, last frame reprezinta cum se va sfarsi videoul.
+              Pentru selectia "Image to video" este obligatorie introducerea start frame-ului.
+              Daca nu se introduce last frame videoul se va termina conform promptului.
+            </div>
 
-    if (errors.length > 0) {
-      errorSummary.textContent = "Verifica: " + errors[0];
-      errorSummary.classList.remove("hidden");
-    }
+            <div class="grid2">
+              <div class="field">
+                <label>Start frame <span class="req">*</span></label>
+                <input id="startFrame" name="startFrame" type="file" accept="image/*" />
+                <div class="miniNote">Accepta: jpg, png, webp.</div>
+                <div class="error" data-error-for="startFrame"></div>
+              </div>
 
-    submitBtn.disabled = errors.length > 0;
-    return errors.length === 0;
-  }
+              <div class="field">
+                <label>Last frame</label>
+                <input id="lastFrame" name="lastFrame" type="file" accept="image/*" />
+                <div class="miniNote">Optional.</div>
+                <div class="error" data-error-for="lastFrame"></div>
+              </div>
+            </div>
 
-  function wireLiveValidation() {
-    qsa("input, select, textarea").forEach(el => {
-      el.addEventListener("input", validate);
-      el.addEventListener("change", validate);
-    });
+            <div class="field">
+              <label for="promptI2V">Generation prompt <span class="req">*</span></label>
+              <textarea id="promptI2V" name="promptI2V" rows="5" placeholder="Scrie promptul complet (descrie cum vrei sa evolueze video-ul)..."></textarea>
+              <div class="error" data-error-for="promptI2V"></div>
+            </div>
+          </section>
 
-    qsa('input[name="generationType"]').forEach(r => {
-      r.addEventListener("change", () => {
-        showPanel(getGenerationType());
-        validate();
-      });
-    });
-  }
+          <!-- CONDITIONAL: REFERENCE TO VIDEO -->
+          <section id="panelReferenceToVideo" class="panel hidden">
+            <div class="panelTitle">Setari: Reference to Video</div>
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    submitStatus.textContent = "";
+            <div class="infoBox">
+              Pentru aceasta selectie, se pot incarca maxim 3 imagini de referinta, ele nu reprezinta start sau last frame,
+              sunt strict pentru referinta si se vor folosi in concordanta cu promptul.
+            </div>
 
-    const ok = validate();
-    if (!ok) {
-      submitStatus.style.color = "rgba(255,255,255,0.72)";
-      submitStatus.textContent = "Formular incomplet. Corecteaza campurile marcate cu rosu.";
-      return;
-    }
+            <div class="grid3">
+              <div class="field">
+                <label>Referinta 1 <span class="req">*</span></label>
+                <input id="ref1" name="ref1" type="file" accept="image/*" />
+                <div class="error" data-error-for="ref1"></div>
+              </div>
+              <div class="field">
+                <label>Referinta 2</label>
+                <input id="ref2" name="ref2" type="file" accept="image/*" />
+                <div class="error" data-error-for="ref2"></div>
+              </div>
+              <div class="field">
+                <label>Referinta 3</label>
+                <input id="ref3" name="ref3" type="file" accept="image/*" />
+                <div class="error" data-error-for="ref3"></div>
+              </div>
+            </div>
 
-    submitStatus.style.color = "rgba(70,227,139,0.95)";
-    submitStatus.textContent = "Perfect. Formular valid (in pasul urmator il conectam la n8n).";
-  });
+            <div class="field">
+              <label for="promptR2V">Generation prompt <span class="req">*</span></label>
+              <textarea id="promptR2V" name="promptR2V" rows="5" placeholder="Scrie promptul complet si cum vrei sa foloseasca referintele..."></textarea>
+              <div class="error" data-error-for="promptR2V"></div>
+            </div>
+          </section>
 
-  showPanel(getGenerationType());
-  wireLiveValidation();
-  validate();
-});
+          <!-- ACTIONS -->
+          <section class="actions">
+            <button id="submitBtn" class="btnPrimary" type="submit" disabled>
+              Trimite
+            </button>
+            <div id="submitStatus" class="status"></div>
+          </section>
+
+          <div class="footNote">
+            <span class="req">*</span> = obligatoriu. Formularul nu se trimite pana nu e complet corect.
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div>© Formular intern • Interfata simpla & clara</div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
