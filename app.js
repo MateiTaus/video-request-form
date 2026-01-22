@@ -323,3 +323,52 @@ form.addEventListener("submit", async (e) => {
   wireTouchedEvents();
   validate(false);
 });
+
+function resetUploadsAndPanels() {
+  const pairs = [
+    ["startFramePreview", "startFrameName"],
+    ["lastFramePreview", "lastFrameName"],
+    ["ref1Preview", "ref1Name"],
+    ["ref2Preview", "ref2Name"],
+    ["ref3Preview", "ref3Name"],
+  ];
+
+  pairs.forEach(([previewId, nameId]) => {
+    const img = document.getElementById(previewId);
+    const name = document.getElementById(nameId);
+
+    if (img) {
+      img.src = "";
+      img.classList.add("hidden");
+    }
+    if (name) {
+      name.textContent = "Nicio imagine selectata";
+    }
+  });
+
+  // ascundem panourile conditional
+  const t2v = document.getElementById("panelTextToVideo");
+  const i2v = document.getElementById("panelImageToVideo");
+  const r2v = document.getElementById("panelReferenceToVideo");
+
+  if (t2v) t2v.classList.add("hidden");
+  if (i2v) i2v.classList.add("hidden");
+  if (r2v) r2v.classList.add("hidden");
+
+  // reset radio selection
+  const radios = document.querySelectorAll('input[name="generationType"]');
+  radios.forEach(r => r.checked = false);
+
+  // daca exista summary errors, il ascundem
+  const box = document.getElementById("errorSummary");
+  if (box) {
+    box.classList.add("hidden");
+    box.textContent = "";
+  }
+
+  // curatam orice highlight rosu ramas
+  document.querySelectorAll(".errorInput").forEach(el => el.classList.remove("errorInput"));
+  document.querySelectorAll(".errorUpload").forEach(el => el.classList.remove("errorUpload"));
+  document.querySelectorAll("[data-error-for]").forEach(e => e.textContent = "");
+}
+
