@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Formular Generare Video</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div class="page">
@@ -13,7 +13,7 @@
         <div class="logoDot"></div>
         <div>
           <div class="title">Formular Generare Video</div>
-          <div class="subtitle">Completeaza clar. Campurile obligatorii sunt marcate.</div>
+          <div class="subtitle">Completeaza clar. Campurile obligatorii sunt marcate cu <span class="req">*</span>.</div>
         </div>
       </div>
     </header>
@@ -22,7 +22,7 @@
       <div class="card">
         <div class="cardHeader">
           <h1>Solicitare video</h1>
-          <p>Formular simplu, gandit pentru persoane non-tehnice. Daca lipseste ceva obligatoriu, vezi mesajul rosu sub camp.</p>
+          <p>Formular simplu, gandit pentru persoane non-tehnice. Erorile apar doar dupa ce ai interactionat cu un camp sau dupa ce apesi “Trimite”.</p>
         </div>
 
         <div id="errorSummary" class="errorSummary hidden"></div>
@@ -129,14 +129,32 @@
             <div class="grid2">
               <div class="field">
                 <label>Start frame <span class="req">*</span></label>
-                <input id="startFrame" name="startFrame" type="file" accept="image/*" />
+
+                <div class="uploadWrap">
+                  <input id="startFrame" name="startFrame" type="file" accept="image/*" class="fileHidden" />
+                  <label id="startFrameBox" for="startFrame" class="uploadBox">
+                    <div class="uploadTop">Incarca imagine</div>
+                    <div id="startFrameName" class="uploadName">Nicio imagine selectata</div>
+                    <div class="uploadHint">Click aici</div>
+                  </label>
+                </div>
+
                 <div class="miniNote">Accepta: jpg, png, webp.</div>
                 <div class="error" data-error-for="startFrame"></div>
               </div>
 
               <div class="field">
                 <label>Last frame</label>
-                <input id="lastFrame" name="lastFrame" type="file" accept="image/*" />
+
+                <div class="uploadWrap">
+                  <input id="lastFrame" name="lastFrame" type="file" accept="image/*" class="fileHidden" />
+                  <label id="lastFrameBox" for="lastFrame" class="uploadBox">
+                    <div class="uploadTop">Incarca imagine</div>
+                    <div id="lastFrameName" class="uploadName">Nicio imagine selectata</div>
+                    <div class="uploadHint">Click aici (optional)</div>
+                  </label>
+                </div>
+
                 <div class="miniNote">Optional.</div>
                 <div class="error" data-error-for="lastFrame"></div>
               </div>
@@ -161,17 +179,46 @@
             <div class="grid3">
               <div class="field">
                 <label>Referinta 1 <span class="req">*</span></label>
-                <input id="ref1" name="ref1" type="file" accept="image/*" />
+
+                <div class="uploadWrap">
+                  <input id="ref1" name="ref1" type="file" accept="image/*" class="fileHidden" />
+                  <label id="ref1Box" for="ref1" class="uploadBox">
+                    <div class="uploadTop">Incarca referinta</div>
+                    <div id="ref1Name" class="uploadName">Nicio imagine selectata</div>
+                    <div class="uploadHint">Click aici</div>
+                  </label>
+                </div>
+
                 <div class="error" data-error-for="ref1"></div>
               </div>
+
               <div class="field">
                 <label>Referinta 2</label>
-                <input id="ref2" name="ref2" type="file" accept="image/*" />
+
+                <div class="uploadWrap">
+                  <input id="ref2" name="ref2" type="file" accept="image/*" class="fileHidden" />
+                  <label id="ref2Box" for="ref2" class="uploadBox">
+                    <div class="uploadTop">Incarca referinta</div>
+                    <div id="ref2Name" class="uploadName">Nicio imagine selectata</div>
+                    <div class="uploadHint">Click aici (optional)</div>
+                  </label>
+                </div>
+
                 <div class="error" data-error-for="ref2"></div>
               </div>
+
               <div class="field">
                 <label>Referinta 3</label>
-                <input id="ref3" name="ref3" type="file" accept="image/*" />
+
+                <div class="uploadWrap">
+                  <input id="ref3" name="ref3" type="file" accept="image/*" class="fileHidden" />
+                  <label id="ref3Box" for="ref3" class="uploadBox">
+                    <div class="uploadTop">Incarca referinta</div>
+                    <div id="ref3Name" class="uploadName">Nicio imagine selectata</div>
+                    <div class="uploadHint">Click aici (optional)</div>
+                  </label>
+                </div>
+
                 <div class="error" data-error-for="ref3"></div>
               </div>
             </div>
@@ -203,6 +250,6 @@
     </footer>
   </div>
 
-  <script src="app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
