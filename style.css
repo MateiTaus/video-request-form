@@ -297,6 +297,9 @@ input[type="text"]:focus, select:focus, textarea:focus{
   background: rgba(0,0,0,0.2);
 }
 
+.statusOk{ color: var(--ok) !important; font-weight: 900; }
+.statusBad{ color: var(--danger) !important; font-weight: 900; }
+
 /* Responsive */
 @media (max-width: 860px){
   .choiceRow{grid-template-columns:1fr}
