@@ -300,6 +300,47 @@ input[type="text"]:focus, select:focus, textarea:focus{
 .statusOk{ color: var(--ok) !important; font-weight: 900; }
 .statusBad{ color: var(--danger) !important; font-weight: 900; }
 
+.topAction{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:14px;
+}
+
+.ugcBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  letter-spacing:.2px;
+  border:1px solid rgba(255, 209, 102, .35);
+  background: rgba(255, 209, 102, .10);
+  color: #ffd166;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.ugcBtn:hover{
+  transform: translateY(-1px);
+  background: rgba(255, 209, 102, .16);
+  border-color: rgba(255, 209, 102, .55);
+}
+
+.ugcBtn:active{
+  transform: translateY(0px);
+}
+
+@media (max-width: 640px){
+  .topAction{
+    justify-content:stretch;
+  }
+  .ugcBtn{
+    width:100%;
+    justify-content:center;
+  }
+}
+
 /* Responsive */
 @media (max-width: 860px){
   .choiceRow{grid-template-columns:1fr}
@@ -308,3 +349,6 @@ input[type="text"]:focus, select:focus, textarea:focus{
   .actions{flex-direction:column; align-items:stretch}
   .btnPrimary{width:100%}
 }
+
+
+
