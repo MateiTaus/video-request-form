@@ -97,6 +97,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Restrictie: la Reference to Video durata maxima este 8s
+if (genType === "reference_to_video" && (videoLength === "16s" || videoLength === "24s")) {
+  addError(
+    "videoLength",
+    "Momentan durata maxima pentru Reference To Video este de 8 secunde",
+    "La Reference to Video: durata maxima este 8 secunde."
+  );
+}
+
     if (genType === "text_to_video") {
       const prompt = qs("#promptT2V").value.trim();
       if (!prompt) addError("promptT2V", "Scrie Generation prompt.", "La Text to Video: Generation prompt este obligatoriu.");
@@ -192,7 +201,10 @@ function wireFileInput(inputId, nameId, previewId) {
       });
       // cand scrie/selecteaza, mentinem butonul updatat fara sa spameze erori
       el.addEventListener("input", () => validate(false));
-      el.addEventListener("change", () => validate(false));
+      el.addEventListener("change", () => {
+  markTouched(el.id);
+  validate(true);
+});
     });
 
     // Radio: marcam touched cand alege ceva
