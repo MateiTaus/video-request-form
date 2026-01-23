@@ -40,6 +40,7 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
+  width: 100%;
 }
 
 .logoDot{
@@ -348,4 +349,9 @@ input[type="text"]:focus, select:focus, textarea:focus{
     width:100%;
     justify-content:center;
   }
+}
+
+.topAction{
+  margin-left: auto;      /* asta îl lipește în dreapta */
+  padding-left: 0;        /* dacă vrei */
 }
