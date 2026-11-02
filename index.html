@@ -14,18 +14,8 @@
         <div class="logoDot"></div>
         <div>
           <div class="title">Formular Generare Video</div>
-          <div class="subtitle">Completeaza clar. Campurile obligatorii sunt marcate cu <span class="req">*</span>.</div>
+          <div class="subtitle">Completează clar. Câmpurile obligatorii sunt marcate cu <span class="req">*</span>.</div>
         </div>
-        <div class="topAction">
-  <a
-    class="ugcBtn"
-    href="https://n8n.srv892462.hstgr.cloud/form/cc3d1334-41a3-4dd2-9028-93c14d77a6c3"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    UGC AI Generator
-  </a>
-</div>
       </div>
     </header>
 
@@ -38,7 +28,7 @@
         <div id="errorSummary" class="errorSummary hidden"></div>
 
         <form id="videoForm" class="form" novalidate>
-          <!-- BASIC FIELDS -->
+          <!-- DETALII GENERALE -->
           <section class="section">
             <div class="sectionTitle">Detalii generale</div>
 
@@ -51,9 +41,8 @@
 
               <div class="field">
                 <label for="projectName">Denumire Proiect</label>
-                <input id="projectName" name="projectName" type="text" placeholder="Numele Proiectului (optional)" />
-                <div class="help">Camp optional.</div>
-                <div class="error" data-error-for="projectName"></div>
+                <input id="projectName" name="projectName" type="text" placeholder="Numele proiectului (opțional)" />
+                <div class="help">Câmp opțional.</div>
               </div>
             </div>
 
@@ -69,29 +58,29 @@
                 <div class="error" data-error-for="videoLength"></div>
               </div>
 
-              <div class="field">
-                <label for="ratioCommon">Ratio <span class="req">*</span></label>
+              <div class="field" id="ratioField">
+                <label for="ratioCommon">Format <span class="req">*</span></label>
                 <select id="ratioCommon" name="ratioCommon">
-                  <option value="" selected disabled>Alege ratio</option>
+                  <option value="" selected disabled>Alege formatul</option>
                   <option value="16:9">16:9 (landscape)</option>
                   <option value="9:16">9:16 (portrait)</option>
                 </select>
-                <div class="help">Ratio se aplica selectiei active.</div>
+                <div class="help" id="ratioHelp">Se aplică tipului de generare ales.</div>
                 <div class="error" data-error-for="ratioCommon"></div>
               </div>
             </div>
           </section>
 
-          <!-- GENERATION TYPE -->
+          <!-- TIP GENERARE -->
           <section class="section">
-            <div class="sectionTitle">Generation Type <span class="req">*</span></div>
+            <div class="sectionTitle">Tip de generare <span class="req">*</span></div>
 
-            <div class="choiceRow" role="radiogroup" aria-label="Generation Type">
+            <div class="choiceRow" role="radiogroup" aria-label="Tip de generare">
               <label class="choiceCard">
                 <input type="radio" name="generationType" value="text_to_video" />
                 <div class="choiceContent">
                   <div class="choiceTitle">Text to Video</div>
-                  <div class="choiceDesc">Genereaza video doar din prompt.</div>
+                  <div class="choiceDesc">Video generat doar din prompt.</div>
                 </div>
               </label>
 
@@ -99,7 +88,7 @@
                 <input type="radio" name="generationType" value="image_to_video" />
                 <div class="choiceContent">
                   <div class="choiceTitle">Image to Video</div>
-                  <div class="choiceDesc">Start frame obligatoriu. Last frame optional.</div>
+                  <div class="choiceDesc">Start frame obligatoriu, last frame opțional.</div>
                 </div>
               </label>
 
@@ -107,7 +96,15 @@
                 <input type="radio" name="generationType" value="reference_to_video" />
                 <div class="choiceContent">
                   <div class="choiceTitle">Reference to Video</div>
-                  <div class="choiceDesc">1–3 imagini pentru referinta (minim 1).</div>
+                  <div class="choiceDesc">1–3 imagini de referință (doar 8s).</div>
+                </div>
+              </label>
+
+              <label class="choiceCard choiceUgc">
+                <input type="radio" name="generationType" value="ugc" />
+                <div class="choiceContent">
+                  <div class="choiceTitle">UGC AI <span class="tag">produs + script</span></div>
+                  <div class="choiceDesc">Persoană reală care prezintă produsul tău, cu vocea în română.</div>
                 </div>
               </label>
             </div>
@@ -115,153 +112,147 @@
             <div class="error" data-error-for="generationType"></div>
           </section>
 
-          <!-- CONDITIONAL: TEXT TO VIDEO -->
-          <section id="panelTextToVideo" class="panel hidden">
-            <div class="panelTitle">Setari: Text to Video</div>
-
+          <!-- TEXT TO VIDEO -->
+          <section id="panel_text_to_video" class="panel hidden">
+            <div class="panelTitle">Setări: Text to Video</div>
             <div class="field">
-              <label for="promptT2V">Generation prompt <span class="req">*</span></label>
+              <label for="promptT2V">Prompt de generare <span class="req">*</span></label>
               <textarea id="promptT2V" name="promptT2V" rows="5" placeholder="Scrie promptul complet pentru generare..."></textarea>
               <div class="error" data-error-for="promptT2V"></div>
             </div>
           </section>
 
-          <!-- CONDITIONAL: IMAGE TO VIDEO -->
-          <section id="panelImageToVideo" class="panel hidden">
-            <div class="panelTitle">Setari: Image to Video</div>
-
+          <!-- IMAGE TO VIDEO -->
+          <section id="panel_image_to_video" class="panel hidden">
+            <div class="panelTitle">Setări: Image to Video</div>
             <div class="infoBox">
-              Start frame reprezinta cum va incepe videoul, last frame reprezinta cum se va sfarsi videoul.
-              Pentru selectia "Image to video" este obligatorie introducerea start frame-ului.
-              Daca nu se introduce last frame videoul se va termina conform promptului.
+              <b>Start frame</b> = cum începe videoclipul, <b>last frame</b> = cum se termină.
+              Start frame-ul este obligatoriu. Fără last frame, videoclipul se termină conform promptului.
             </div>
-
             <div class="grid2">
               <div class="field">
                 <label>Start frame <span class="req">*</span></label>
-
-                <div class="uploadWrap">
-                  <input id="startFrame" name="startFrame" type="file" accept="image/*" class="fileHidden" />
-                   <label id="startFrameBox" for="startFrame" class="uploadBox">
-                    <div class="uploadTop">Incarca imagine</div>
-                    <img id="startFramePreview" class="uploadPreview hidden" alt="Preview start frame" />
-                    <div id="startFrameName" class="uploadName">Nicio imagine selectata</div>
-                    <div class="uploadHint">Click aici</div>
-                   </label>
-                </div>
-
-                <div class="miniNote">Accepta: jpg, png, webp.</div>
+                <div class="upload" data-file="startFrame" data-hint="Click aici"></div>
                 <div class="error" data-error-for="startFrame"></div>
               </div>
-
               <div class="field">
                 <label>Last frame</label>
-
-                <div class="uploadWrap">
-                  <input id="lastFrame" name="lastFrame" type="file" accept="image/*" class="fileHidden" />
-                  <label id="lastFrameBox" for="lastFrame" class="uploadBox">
-  <div class="uploadTop">Incarca imagine</div>
-  <img id="lastFramePreview" class="uploadPreview hidden" alt="Preview last frame" />
-  <div id="lastFrameName" class="uploadName">Nicio imagine selectata</div>
-  <div class="uploadHint">Click aici (optional)</div>
-</label>
-                </div>
-
-                <div class="miniNote">Optional.</div>
-                <div class="error" data-error-for="lastFrame"></div>
+                <div class="upload" data-file="lastFrame" data-hint="Click aici (opțional)"></div>
               </div>
             </div>
-
             <div class="field">
-              <label for="promptI2V">Generation prompt <span class="req">*</span></label>
-              <textarea id="promptI2V" name="promptI2V" rows="5" placeholder="Scrie promptul complet (descrie cum vrei sa evolueze video-ul)..."></textarea>
+              <label for="promptI2V">Prompt de generare <span class="req">*</span></label>
+              <textarea id="promptI2V" name="promptI2V" rows="5" placeholder="Descrie cum vrei să evolueze videoclipul..."></textarea>
               <div class="error" data-error-for="promptI2V"></div>
             </div>
           </section>
 
-          <!-- CONDITIONAL: REFERENCE TO VIDEO -->
-          <section id="panelReferenceToVideo" class="panel hidden">
-            <div class="panelTitle">Setari: Reference to Video</div>
-
+          <!-- REFERENCE TO VIDEO -->
+          <section id="panel_reference_to_video" class="panel hidden">
+            <div class="panelTitle">Setări: Reference to Video</div>
             <div class="infoBox">
-              Pentru aceasta selectie, se pot incarca maxim 3 imagini de referinta, ele nu reprezinta start sau last frame,
-              sunt strict pentru referinta si se vor folosi in concordanta cu promptul.
+              Maxim 3 imagini de referință. Nu sunt start sau last frame — se folosesc strict ca referință, împreună cu promptul.
             </div>
-
             <div class="grid3">
               <div class="field">
-                <label>Referinta 1 <span class="req">*</span></label>
-
-                <div class="uploadWrap">
-                  <input id="ref1" name="ref1" type="file" accept="image/*" class="fileHidden" />
-                  <label id="ref1Box" for="ref1" class="uploadBox">
-                    <div class="uploadTop">Incarca referinta</div>
-                    <img id="ref1Preview" class="uploadPreview hidden" alt="Preview referinta 1" />
-                    <div id="ref1Name" class="uploadName">Nicio imagine selectata</div>
-                    <div class="uploadHint">Click aici</div>
-                  </label>
-                </div>
-
+                <label>Referința 1 <span class="req">*</span></label>
+                <div class="upload" data-file="ref1" data-hint="Click aici"></div>
                 <div class="error" data-error-for="ref1"></div>
               </div>
-
               <div class="field">
-                <label>Referinta 2</label>
-
-                <div class="uploadWrap">
-                  <input id="ref2" name="ref2" type="file" accept="image/*" class="fileHidden" />
-                  <label id="ref2Box" for="ref2" class="uploadBox">
-                    <div class="uploadTop">Incarca referinta</div>
-                    <img id="ref2Preview" class="uploadPreview hidden" alt="Preview referinta 2" />
-                    <div id="ref2Name" class="uploadName">Nicio imagine selectata</div>
-                    <div class="uploadHint">Click aici (optional)</div>
-                  </label>
-                </div>
-
-                <div class="error" data-error-for="ref2"></div>
+                <label>Referința 2</label>
+                <div class="upload" data-file="ref2" data-hint="Click aici (opțional)"></div>
               </div>
-
               <div class="field">
-                <label>Referinta 3</label>
-
-                <div class="uploadWrap">
-                  <input id="ref3" name="ref3" type="file" accept="image/*" class="fileHidden" />
-                  <label id="ref3Box" for="ref3" class="uploadBox">
-                    <div class="uploadTop">Incarca referinta</div>
-                    <img id="ref3Preview" class="uploadPreview hidden" alt="Preview referinta 3" />
-                    <div id="ref3Name" class="uploadName">Nicio imagine selectata</div>
-                    <div class="uploadHint">Click aici (optional)</div>
-                  </label>
-                </div>
-
-                <div class="error" data-error-for="ref3"></div>
+                <label>Referința 3</label>
+                <div class="upload" data-file="ref3" data-hint="Click aici (opțional)"></div>
               </div>
             </div>
-
             <div class="field">
-              <label for="promptR2V">Generation prompt <span class="req">*</span></label>
-              <textarea id="promptR2V" name="promptR2V" rows="5" placeholder="Scrie promptul complet si cum vrei sa foloseasca referintele..."></textarea>
+              <label for="promptR2V">Prompt de generare <span class="req">*</span></label>
+              <textarea id="promptR2V" name="promptR2V" rows="5" placeholder="Scrie promptul și cum vrei să fie folosite referințele..."></textarea>
               <div class="error" data-error-for="promptR2V"></div>
             </div>
           </section>
 
-          <!-- ACTIONS -->
+          <!-- UGC -->
+          <section id="panel_ugc" class="panel hidden">
+            <div class="panelTitle">Setări: UGC AI</div>
+            <div class="infoBox">
+              Scriptul și produsul nu trebuie să încalce politicile Google Veo, altfel vei primi un email de eroare.
+              <ul class="checklist">
+                <li>Conținut <b>family-friendly</b>: fără nuditate, violență, ură, droguri sau activități periculoase.</li>
+                <li>Doar <b>adulți (21+)</b>, îmbrăcați complet; fără persoane celebre sau imitarea lor.</li>
+                <li>Fără date personale sau afirmații medicale/financiare nefondate.</li>
+                <li>În baie: evită cabinele și prim-planurile pe obiecte sanitare.</li>
+                <li>Limbaj decent, fără cuvinte vulgare.</li>
+              </ul>
+              Formatul UGC este întotdeauna <b>9:16 (vertical)</b>.
+            </div>
+
+            <div class="grid2">
+              <div class="field">
+                <label>Poza cu produsul <span class="req">*</span></label>
+                <div class="upload" data-file="productImage" data-hint="Click aici" data-tall="1"></div>
+                <div class="error" data-error-for="productImage"></div>
+              </div>
+
+              <div class="field">
+                <label for="ugcScript">Script pentru video <span class="req">*</span></label>
+                <textarea id="ugcScript" name="ugcScript" rows="6" maxlength="350" placeholder="Exact ce spune persoana, în română (maxim 350 de caractere)"></textarea>
+                <div class="help"><span id="ugcScriptCount">0</span> / 350 caractere</div>
+                <div class="error" data-error-for="ugcScript"></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="ugcDetails">Informații video <span class="req">*</span></label>
+              <textarea id="ugcDetails" name="ugcDetails" rows="3" placeholder="Specificații: PERSOANĂ (vârstă, gen, stil) și CADRE (unde, ce face)"></textarea>
+              <div class="error" data-error-for="ugcDetails"></div>
+            </div>
+
+            <div class="field">
+              <label>Voce custom ElevenLabs</label>
+              <div class="segmented" role="radiogroup" aria-label="Voce custom">
+                <label><input type="radio" name="voiceCustom" value="NU" checked /><span>Nu, vocea generată</span></label>
+                <label><input type="radio" name="voiceCustom" value="DA" /><span>Da, vocea mea custom</span></label>
+              </div>
+            </div>
+
+            <div id="voiceBox" class="subPanel hidden">
+              <div class="grid2">
+                <div class="field">
+                  <label for="voiceId">ID voce ElevenLabs <span class="req">*</span></label>
+                  <input id="voiceId" name="voiceId" type="text" placeholder="ex: 21m00Tcm4TlvDq8ikWAM" />
+                  <div class="error" data-error-for="voiceId"></div>
+                </div>
+                <div class="field">
+                  <label>Cont ElevenLabs folosit <span class="req">*</span></label>
+                  <div class="segmented vertical" role="radiogroup" aria-label="Cont ElevenLabs">
+                    <label><input type="radio" name="voiceAccount" value="t2" /><span>Contul T&amp;T <b>+2.00 RON</b></span></label>
+                    <label><input type="radio" name="voiceAccount" value="personal" /><span>Contul meu <b>+1.00 RON</b></span></label>
+                  </div>
+                  <div class="error" data-error-for="voiceAccount"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- TRIMITE -->
           <section class="actions">
-            <button id="submitBtn" class="btnPrimary" type="submit" disabled>
-              Trimite
-            </button>
+            <button id="submitBtn" class="btnPrimary" type="submit" disabled>Trimite</button>
             <div id="submitStatus" class="status"></div>
           </section>
 
           <div class="footNote">
-            <span class="req">*</span> = obligatoriu. Formularul nu se trimite pana nu e complet corect.
+            <span class="req">*</span> = obligatoriu. Formularul nu se trimite până nu este complet.
           </div>
         </form>
       </div>
     </main>
 
     <footer class="footer">
-      <div>© T&T Automations • all rights reserved</div>
+      <div>© T&amp;T Automations • all rights reserved</div>
     </footer>
   </div>
 

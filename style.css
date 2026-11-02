@@ -116,7 +116,7 @@ input[type="text"]:focus, select:focus, textarea:focus{
 
 .choiceRow{
   display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap:12px;
 }
 
@@ -302,6 +302,10 @@ input[type="text"]:focus, select:focus, textarea:focus{
 .statusBad{ color: var(--danger) !important; font-weight: 900; }
 
 /* Responsive */
+@media (max-width: 980px){
+  .choiceRow{grid-template-columns:1fr 1fr}
+}
+
 @media (max-width: 860px){
   .choiceRow{grid-template-columns:1fr}
   .grid2{grid-template-columns:1fr}
@@ -310,48 +314,48 @@ input[type="text"]:focus, select:focus, textarea:focus{
   .btnPrimary{width:100%}
 }
 
-.topAction{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:14px;
+/* ── Adăugări: UGC, opțiuni segmentate ───────────────────────────── */
+.choiceCard:has(input:checked){
+  border-color: rgba(255,209,102,0.6);
+  background: rgba(255,209,102,0.07);
+  box-shadow: 0 0 0 3px rgba(255,209,102,0.10);
+}
+.choiceUgc .choiceTitle{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.tag{
+  font-size:10px; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+  padding:2px 7px; border-radius:999px;
+  color:#0a0d16; background: linear-gradient(135deg, var(--accent), var(--accent2));
 }
 
-.ugcBtn{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:700;
-  letter-spacing:.2px;
-  border:1px solid rgba(255, 209, 102, .35);
-  background: rgba(255, 209, 102, .10);
-  color: #ffd166;
-  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+.checklist{margin:8px 0 8px 18px; padding:0}
+.checklist li{margin:2px 0}
+
+.segmented{
+  display:inline-flex; gap:6px; padding:4px;
+  border:1px solid var(--line); border-radius:14px; background: rgba(15,23,48,0.45);
+}
+.segmented.vertical{display:flex; flex-direction:column}
+.segmented label{cursor:pointer}
+.segmented input{position:absolute; opacity:0; pointer-events:none}
+.segmented span{
+  display:block; padding:9px 12px; border-radius:10px; font-size:13px;
+  color: var(--muted);
+}
+.segmented label:hover span{color: var(--text)}
+.segmented input:checked + span{
+  color:#0a0d16; font-weight:800;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+}
+.segmented input:focus-visible + span{box-shadow: 0 0 0 3px rgba(255,209,102,0.25)}
+
+.subPanel{
+  margin-top:12px; padding:12px;
+  border-radius:14px; border:1px solid rgba(255,255,255,0.10);
+  background: rgba(15,23,48,0.35);
 }
 
-.ugcBtn:hover{
-  transform: translateY(-1px);
-  background: rgba(255, 209, 102, .16);
-  border-color: rgba(255, 209, 102, .55);
-}
+.uploadBox.tall{min-height:150px}
+.uploadBox.tall .uploadPreview{max-height:200px; object-fit:contain}
 
-.ugcBtn:active{
-  transform: translateY(0px);
-}
-
-@media (max-width: 640px){
-  .topAction{
-    justify-content:stretch;
-  }
-  .ugcBtn{
-    width:100%;
-    justify-content:center;
-  }
-}
-
-.topAction{
-  margin-left: auto;      /* asta îl lipește în dreapta */
-  padding-left: 0;        /* dacă vrei */
-}
+select:disabled{opacity:.45; cursor:not-allowed}
+.panel > .field, .panel > .grid2, .panel > .grid3{margin-top:12px}
